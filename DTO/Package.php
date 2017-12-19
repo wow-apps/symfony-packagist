@@ -31,6 +31,9 @@ class Package
     /** @var \ArrayObject|PackageMaintainer[] */
     private $maintainers;
 
+    /** @var string */
+    private $version;
+
     /** @var \ArrayObject|PackageVersion[] */
     private $versions;
 
@@ -39,6 +42,9 @@ class Package
 
     /** @var string */
     private $repository;
+
+    /** @var string */
+    private $url;
 
     /** @var GitHubStat */
     private $github;
@@ -127,6 +133,24 @@ class Package
     public function setMaintainers($maintainers)
     {
         $this->maintainers = $maintainers;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getVersion(): string
+    {
+        return $this->version;
+    }
+
+    /**
+     * @param string $version
+     * @return Package
+     */
+    public function setVersion(string $version): Package
+    {
+        $this->version = $version;
         return $this;
     }
 
@@ -289,6 +313,24 @@ class Package
     public function setFavers(int $favers): Package
     {
         $this->favers = $favers;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUrl(): string
+    {
+        return $this->url ?? '';
+    }
+
+    /**
+     * @param string $url
+     * @return Package
+     */
+    public function setUrl(string $url): Package
+    {
+        $this->url = $url;
         return $this;
     }
 }

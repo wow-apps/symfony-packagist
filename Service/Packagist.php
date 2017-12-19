@@ -1,7 +1,7 @@
 <?php
 /**
- * This file is part of the Symfony-Bundles.com project
- * https://github.com/wow-apps/symfony-bundles
+ * This file is part of the wow-apps/symfony-packagist project
+ * https://github.com/wow-apps/symfony-packagist
  *
  * (c) 2017 WoW-Apps
  *
@@ -11,8 +11,16 @@
 
 namespace WowApps\PackagistBundle\Service;
 
-use GuzzleHttp\Client as GuzzleClient;
+use WowApps\PackagistBundle\DTO\DownloadsStat;
+use WowApps\PackagistBundle\DTO\GitHubStat;
 use WowApps\PackagistBundle\DTO\Package;
+use WowApps\PackagistBundle\DTO\PackageAuthor;
+use WowApps\PackagistBundle\DTO\PackageDependency;
+use WowApps\PackagistBundle\DTO\PackageDist;
+use WowApps\PackagistBundle\DTO\PackageMaintainer;
+use WowApps\PackagistBundle\DTO\PackageSource;
+use WowApps\PackagistBundle\DTO\PackageVersion;
+use WowApps\PackagistBundle\Exception\PackagistException;
 
 /**
  * Class Packagist
@@ -24,17 +32,131 @@ class Packagist
 {
     const API_URL = 'https://packagist.org';
     const API_URL_LIST = self::API_URL . '/packages/list.json';
-    const API_URL_SEARCH = self::API_URL . '/packages/search.json';
+    const API_URL_SEARCH = self::API_URL . '/search.json';
     const API_URL_PACKAGE = self::API_URL . '/packages/%s.json';
+    const API_RESULT_PER_PAGE = 15;
+    const SUPPORTED_PACKAGE_TYPES = [
+        'symfony-bundle',
+        'wordpress-plugin',
+        'typo3-cms-extension',
+        'library',
+        'project',
+        'metapackage',
+        'composer-plugin'
+    ];
 
-    /** @var GuzzleClient */
-    private $guzzleClient;
+    /** @var ApiProvider */
+    private $apiProvider;
 
     /**
      * Packagist constructor.
+     *
+     * @param ApiProvider $apiProvider
      */
-    public function __construct() {
-        $this->guzzleClient = new GuzzleClient();
+    public function __construct(ApiProvider $apiProvider)
+    {
+        $this->apiProvider = $apiProvider;
+    }
+
+    /**
+     * @param string|null $query
+     * @param string|null $tag
+     * @param string|null $type
+     * @return \ArrayObject|Package[]
+     */
+    public function searchPackages($query = null, $tag = null, $type = null): \ArrayObject
+    {
+        $result = new \ArrayObject();
+        $currentPage = 1;
+        $request = self::API_URL_SEARCH;
+        $attributes = [];
+
+        if (empty($query)) {
+            throw new PackagistException(PackagistException::E_EMPTY_SEARCH_QUERY);
+        }
+
+        $attributes[] = 'q=' . urlencode($query);
+
+        if (!empty($tag)) {
+            $attributes[] = 'tags=' . urlencode($tag);
+        }
+
+        if (!empty($type)) {
+            $this->validatePackageType($type);
+            $attributes[] = 'type=' . urlencode($type);
+        }
+
+        $request .= '?' . implode('&', $attributes);
+
+        $response = $this->apiProvider->getAPIResponse($request);
+        $this->validateResponse($response, 'results');
+
+        if ($response['total'] == 0) {
+            return $result;
+        }
+
+        $this->fillSearchResultObject($result, $response['results']);
+
+        //TODO: remove
+        var_dump($result);die;
+
+        $totalPages = ceil((int) $response['total'] / self::API_RESULT_PER_PAGE);
+
+        if ($totalPages === 1) {
+            return $result;
+        }
+
+        do {
+
+        } while ($currentPage <= $totalPages);
+
+        return $result;
+    }
+
+    private function fillSearchResultObject(\ArrayObject &$searchResultObject, array $searchResult)
+    {
+        if (!empty($searchResult)) {
+            foreach ($searchResult as $item) {
+                $package = new Package();
+                $package
+                    ->setName($item['name'])
+                    ->setDescription($item['description'])
+                    ->setUrl($item['url'])
+                    ->setRepository($item['repository'])
+                    ->setDownloads(
+                        new DownloadsStat($item['downloads'])
+                    )
+                    ->setFavers($item['favers'])
+                ;
+
+                $searchResultObject->offsetSet($package->getName(), $package);
+            }
+        }
+    }
+
+    /**
+     * @param string|null $vendor
+     * @param string|null $type
+     * @return array
+     */
+    public function getPackageList($vendor = null, $type = null): array
+    {
+        $request = self::API_URL_LIST;
+        $attributes = [];
+        if (!empty($vendor)) {
+            $attributes[] = 'vendor=' . urlencode($vendor);
+        }
+        if (!empty($type)) {
+            $this->validatePackageType($type);
+            $attributes[] = 'type=' . urlencode($type);
+        }
+        if (!empty($attributes)) {
+            $request .= '?' . implode('&', $attributes);
+        }
+        $response = $this->apiProvider->getAPIResponse($request);
+        $this->validateResponse($response, 'packageNames');
+
+        return $response['packageNames'];
     }
 
     /**
@@ -43,29 +165,204 @@ class Packagist
      */
     public function getPackage(string $packageName): Package
     {
-        //
+        $request = sprintf(self::API_URL_PACKAGE, trim($packageName));
+        $response = $this->apiProvider->getAPIResponse($request);
+        $this->validateResponse($response, 'package');
+
+        return $this->createPackageObject($response);
     }
 
     /**
-     * @param string $url
-     * @return array
-     * @throws \RuntimeException
+     * @param array $packageNames
+     * @return \ArrayObject|Package[]
      */
-    private function getAPIResponse(string $url): array
+    public function getPackages(array $packageNames): \ArrayObject
     {
-        try {
-            $request = $this->guzzleClient->get($url);
-        } catch (ClientException $e) {
-            throw new \RuntimeException($e->getMessage());
+        $packages = new \ArrayObject();
+
+        foreach ($packageNames as $packageName) {
+            $package = $this->getPackage($packageName);
+            $packages->offsetSet($packageName, $package);
         }
 
-        $response = $request->getBody();
-        $json = json_decode($response, true);
+        return $packages;
+    }
 
-        if (!$json) {
-            throw new \RuntimeException('Can\'t parse json');
+    /**
+     * @param array $packageArray
+     * @return Package
+     */
+    private function createPackageObject(array $packageArray): Package
+    {
+        $package = new Package();
+
+        $package
+            ->setName($packageArray['package']['name'] ?? '')
+            ->setDescription($packageArray['package']['description'] ?? '')
+            ->setTime($packageArray['package']['time'] ?? '')
+            ->setMaintainers(new \ArrayObject())
+            ->setVersions(new \ArrayObject())
+            ->setType($packageArray['package']['type'] ?? '')
+            ->setRepository($packageArray['package']['repository'] ?? '')
+            ->setGithub(
+                new GitHubStat(
+                    (int) $packageArray['package']['github_stars'] ?? 0,
+                    (int) $packageArray['package']['github_watchers'] ?? 0,
+                    (int) $packageArray['package']['github_forks'] ?? 0,
+                    (int) $packageArray['package']['github_open_issues'] ?? 0
+                )
+            )
+            ->setLanguage($packageArray['package']['language'] ?? '')
+            ->setDependents((int) $packageArray['package']['dependents'] ?? 0)
+            ->setSuggesters((int) $packageArray['package']['suggesters'] ?? 0)
+            ->setDownloads(
+                new DownloadsStat(
+                    (int) $packageArray['package']['downloads']['total'] ?? 0,
+                    (int) $packageArray['package']['downloads']['monthly'] ?? 0,
+                    (int) $packageArray['package']['downloads']['daily'] ?? 0
+                )
+            )
+            ->setFavers((int) $packageArray['package']['favers'] ?? 0)
+        ;
+
+        if (!empty($packageArray['package']['maintainers'])) {
+            foreach ($packageArray['package']['maintainers'] as $maintainer) {
+                $package->getMaintainers()->append(
+                    new PackageMaintainer(
+                        $maintainer['name'] ?? '',
+                        $maintainer['avatar_url'] ?? ''
+                    )
+                );
+            }
         }
 
-        return $json;
+        if (!empty($packageArray['package']['versions'])) {
+            foreach ($packageArray['package']['versions'] as $version) {
+                if (empty($version['version'])) {
+                    continue;
+                }
+
+                $packageVersion = new PackageVersion();
+
+                $packageVersion
+                    ->setName($version['name'] ?? '')
+                    ->setDescription($version['description'] ?? '')
+                    ->setKeywords($version['keywords'] ?? [])
+                    ->setHomepage($version['homepage'] ?? '')
+                    ->setVersion($version['version'])
+                    ->setVersionNormalized($version['version_normalized'] ?? '')
+                    ->setLicense($version['license'][0] ?? '')
+                    ->setAuthors(new \ArrayObject())
+                    ->setSource(
+                        new PackageSource(
+                            $version['source']['type'] ?? '',
+                            $version['source']['url'] ?? '',
+                            $version['source']['reference'] ?? ''
+                        )
+                    )
+                    ->setDist(
+                        new PackageDist(
+                            $version['dist']['type'] ?? '',
+                            $version['dist']['url'] ?? '',
+                            $version['dist']['reference'] ?? '',
+                            $version['dist']['shasum'] ?? ''
+                        )
+                    )
+                    ->setType($version['type'] ?? '')
+                    ->setTime($version['time'] ?? '')
+                    ->setAutoload($version['autoload'] ?? [])
+                    ->setRequire(new \ArrayObject())
+                ;
+
+                if (!empty($version['authors'])) {
+                    foreach ($version['authors'] as $author) {
+                        $packageVersion->getAuthors()->append(
+                            new PackageAuthor(
+                                $author['name'] ?? '',
+                                $author['email'] ?? '',
+                                $author['homepage'] ?? '',
+                                $author['role'] ?? ''
+                            )
+                        );
+                    }
+                }
+
+                if (!empty($version['require'])) {
+                    foreach ($version['require'] as $name => $ver) {
+                        $packageVersion->getRequire()->append(new PackageDependency($name, $ver));
+                    }
+                }
+
+                $package->getVersions()->offsetSet($packageVersion->getVersion(), $packageVersion);
+            }
+        }
+
+        $package->setVersion($this->identifyPackageVersion($package));
+
+        return $package;
+    }
+
+    /**
+     * @param Package $package
+     * @return string
+     */
+    private function identifyPackageVersion(Package $package): string
+    {
+        if (empty($package->getVersions())) {
+            return '';
+        }
+
+        $currentVersion = '';
+
+        foreach ($package->getVersions() as $version) {
+            if (preg_match('/(dev)/i', $version->getVersion())) {
+                continue;
+            }
+
+            if (preg_match('/(master)/i', $version->getVersion())) {
+                continue;
+            }
+
+            if ((int) str_replace('.', '', $version->getVersion()) < (int) str_replace('.', '', $currentVersion)) {
+                continue;
+            }
+
+            $currentVersion = $version->getVersion();
+        }
+
+        return $currentVersion;
+    }
+
+    /**
+     * @param string $packageType
+     * @throws PackagistException
+     */
+    private function validatePackageType(string $packageType)
+    {
+        if (empty($packageType) || !in_array($packageType, self::SUPPORTED_PACKAGE_TYPES)) {
+            throw new PackagistException(
+                PackagistException::E_UNSUPPORTED_PACKAGE_TYPE
+            );
+        }
+    }
+
+    /**
+     * @param array $response
+     * @param string
+     * @return void
+     * @throws PackagistException
+     */
+    private function validateResponse(array $response, string $searchKey = null)
+    {
+        if (isset($response['status']) && $response['status'] == 'error') {
+            throw new PackagistException($response['message'] ?? PackagistException::E_UNKNOWN);
+        }
+
+        if (!empty($searchKey) && !isset($response[$searchKey])) {
+            throw new PackagistException(
+                PackagistException::E_RESPONSE_WITHOUT_NEEDED_KEY,
+                ['needed_key' => $searchKey]
+            );
+        }
     }
 }

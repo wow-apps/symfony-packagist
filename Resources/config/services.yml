@@ -1,3 +1,6 @@
 services:
+    wowapps.api.provider:
+        class: WowApps\PackagistBundle\Service\ApiProvider
     wowapps.packagist.service:
         class: WowApps\PackagistBundle\Service\Packagist
+        arguments: ['@wowapps.api.provider']
