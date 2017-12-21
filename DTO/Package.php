@@ -285,7 +285,7 @@ class Package
      */
     public function getDownloads(): DownloadsStat
     {
-        return $this->downloads ?? 0;
+        return $this->downloads ?? new DownloadsStat();
     }
 
     /**
