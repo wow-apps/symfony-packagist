@@ -29,6 +29,7 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder();
         $treeBuilder->root('wow_apps_packagist');
+
         return $treeBuilder;
     }
 }
