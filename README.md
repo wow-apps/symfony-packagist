@@ -1,6 +1,6 @@
 ![Symfony Packagist Banner](http://cdn.wow-apps.pro/packagist/symfony-packagist-banner-v2.png)
 
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/9e427ba8-ceee-47a4-aeef-a788b9875064/big.png)](https://insight.sensiolabs.com/projects/9e427ba8-ceee-47a4-aeef-a788b9875064)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/7e053a09-3bd3-4e6d-8a7b-ae12de1eaada/big.png)](https://insight.sensiolabs.com/projects/7e053a09-3bd3-4e6d-8a7b-ae12de1eaada)
 
 [![Packagist](https://img.shields.io/packagist/v/wow-apps/symfony-packagist.svg?style=flat-square)](https://github.com/wow-apps/symfony-packagist)
 [![Packagist](https://img.shields.io/packagist/dt/wow-apps/symfony-packagist.svg?style=flat-square)](https://packagist.org/packages/wow-apps/symfony-packagist)
@@ -9,7 +9,7 @@
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/wow-apps/symfony-packagist/blob/master/LICENCE)
 [![Code Climate](https://codeclimate.com/github/wow-apps/symfony-packagist/badges/gpa.svg)](https://codeclimate.com/github/wow-apps/symfony-packagist)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/ce3fffd811f2463a94ed4065a341885a)](https://www.codacy.com/app/lion-samara/symfony-packagist?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=wow-apps/symfony-packagist&amp;utm_campaign=Badge_Grade)
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/9e427ba8-ceee-47a4-aeef-a788b9875064/mini.png)](https://insight.sensiolabs.com/projects/9e427ba8-ceee-47a4-aeef-a788b9875064)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/7e053a09-3bd3-4e6d-8a7b-ae12de1eaada/mini.png)](https://insight.sensiolabs.com/projects/7e053a09-3bd3-4e6d-8a7b-ae12de1eaada)
 
 
 # Symfony Packagist API Bundle
