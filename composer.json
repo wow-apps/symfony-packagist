@@ -1,6 +1,5 @@
 {
   "name": "wow-apps/symfony-packagist",
-  "version": "1.0.0",
   "description" : "Packagist API Bundle for Symfony 3 and 4",
   "type" : "symfony-bundle",
   "homepage": "https://github.com/wow-apps/symfony-packagist",
