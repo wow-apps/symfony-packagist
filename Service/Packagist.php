@@ -246,6 +246,19 @@ class Packagist
             }
         }
 
+        $this->addPackageVersions($package, $packageArray);
+
+        $package->setVersion($this->identifyPackageVersion($package));
+
+        return $package;
+    }
+
+    /**
+     * @param Package $package
+     * @param array $packageArray
+     */
+    private function addPackageVersions(Package &$package, array $packageArray)
+    {
         if (!empty($packageArray['package']['versions'])) {
             foreach ($packageArray['package']['versions'] as $version) {
                 if (empty($version['version'])) {
@@ -306,10 +319,6 @@ class Packagist
                 $package->getVersions()->offsetSet($packageVersion->getVersion(), $packageVersion);
             }
         }
-
-        $package->setVersion($this->identifyPackageVersion($package));
-
-        return $package;
     }
 
     /**
