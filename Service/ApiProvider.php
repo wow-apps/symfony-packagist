@@ -1,7 +1,7 @@
 <?php
 /**
- * This file is part of the Symfony-Bundles.com project
- * https://github.com/wow-apps/symfony-bundles
+ * This file is part of the wow-apps/symfony-packagist project
+ * https://github.com/wow-apps/symfony-packagist
  *
  * (c) 2017 WoW-Apps
  *

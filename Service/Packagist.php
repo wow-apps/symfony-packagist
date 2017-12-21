@@ -97,9 +97,6 @@ class Packagist
 
         $this->fillSearchResultObject($result, $response['results']);
 
-        //TODO: remove
-        var_dump($result);die;
-
         $totalPages = ceil((int) $response['total'] / self::API_RESULT_PER_PAGE);
 
         if ($totalPages === 1) {
@@ -107,12 +104,25 @@ class Packagist
         }
 
         do {
+            ++$currentPage;
+            $response = $this->apiProvider->getAPIResponse($request . '&page=' . $currentPage);
+            $this->validateResponse($response, 'results');
 
-        } while ($currentPage <= $totalPages);
+            if ($response['total'] == 0) {
+                break;
+            }
+
+            $this->fillSearchResultObject($result, $response['results']);
+
+        } while ($currentPage < $totalPages);
 
         return $result;
     }
 
+    /**
+     * @param \ArrayObject $searchResultObject
+     * @param array $searchResult
+     */
     private function fillSearchResultObject(\ArrayObject &$searchResultObject, array $searchResult)
     {
         if (!empty($searchResult)) {

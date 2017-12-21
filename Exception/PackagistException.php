@@ -1,9 +1,9 @@
 <?php
 /**
- * This file is part of the WoW-Apps/Symfony-Slack-Bot bundle for Symfony 3
- * https://github.com/wow-apps/symfony-slack-bot
+ * This file is part of the wow-apps/symfony-packagist project
+ * https://github.com/wow-apps/symfony-packagist
  *
- * (c) 2016 WoW-Apps
+ * (c) 2017 WoW-Apps
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -17,7 +17,7 @@ use Psr\Log\InvalidArgumentException;
  * Class PackagistException
  *
  * @author Alexey Samara <lion.samara@gmail.com>
- * @package WowApps\SlackBundle
+ * @package wow-apps/symfony-packagist
  */
 class PackagistException extends InvalidArgumentException
 {
@@ -30,4 +30,5 @@ class PackagistException extends InvalidArgumentException
     const E_EMPTY_PACKAGE_NAME = 'Package name can\'t be empty.';
     const E_EMPTY_PACKAGE_NAME_DESCRIPTION = 'Command example: '
             . './bin/console wowapps:packagist:package wow-apps/symfony-slack-bot';
+    const W_NO_SEARCH_RESULT = 'Nothing founded. Try to change search query.';
 }

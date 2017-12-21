@@ -69,7 +69,7 @@ class Package
      */
     public function getName(): string
     {
-        return $this->name;
+        return $this->name ?? '';
     }
 
     /**
@@ -87,7 +87,7 @@ class Package
      */
     public function getDescription(): string
     {
-        return $this->description;
+        return $this->description ?? '';
     }
 
     /**
@@ -105,7 +105,7 @@ class Package
      */
     public function getTime(): string
     {
-        return $this->time;
+        return $this->time ?? '';
     }
 
     /**
@@ -123,7 +123,7 @@ class Package
      */
     public function getMaintainers()
     {
-        return $this->maintainers;
+        return $this->maintainers ?? new \ArrayObject();
     }
 
     /**
@@ -141,7 +141,7 @@ class Package
      */
     public function getVersion(): string
     {
-        return $this->version;
+        return $this->version ?? '';
     }
 
     /**
@@ -159,7 +159,7 @@ class Package
      */
     public function getVersions()
     {
-        return $this->versions;
+        return $this->versions ?? new \ArrayObject();
     }
 
     /**
@@ -177,7 +177,7 @@ class Package
      */
     public function getType(): string
     {
-        return $this->type;
+        return $this->type ?? '';
     }
 
     /**
@@ -195,7 +195,7 @@ class Package
      */
     public function getRepository(): string
     {
-        return $this->repository;
+        return $this->repository ?? '';
     }
 
     /**
@@ -213,7 +213,7 @@ class Package
      */
     public function getGithub(): GitHubStat
     {
-        return $this->github;
+        return $this->github ?? new GitHubStat();
     }
 
     /**
@@ -231,7 +231,7 @@ class Package
      */
     public function getLanguage(): string
     {
-        return $this->language;
+        return $this->language ?? '';
     }
 
     /**
@@ -249,7 +249,7 @@ class Package
      */
     public function getDependents(): int
     {
-        return $this->dependents;
+        return $this->dependents ?? 0;
     }
 
     /**
@@ -267,7 +267,7 @@ class Package
      */
     public function getSuggesters(): int
     {
-        return $this->suggesters;
+        return $this->suggesters ?? 0;
     }
 
     /**
@@ -285,7 +285,7 @@ class Package
      */
     public function getDownloads(): DownloadsStat
     {
-        return $this->downloads;
+        return $this->downloads ?? 0;
     }
 
     /**
@@ -303,7 +303,7 @@ class Package
      */
     public function getFavers(): int
     {
-        return $this->favers;
+        return $this->favers ?? 0;
     }
 
     /**

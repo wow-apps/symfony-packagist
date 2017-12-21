@@ -1,4 +1,13 @@
 <?php
+/**
+ * This file is part of the wow-apps/symfony-packagist project
+ * https://github.com/wow-apps/symfony-packagist
+ *
+ * (c) 2017 WoW-Apps
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace WowApps\PackagistBundle\DependencyInjection;
 
@@ -8,9 +17,10 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
 
 /**
- * This is the class that loads and manages your bundle configuration.
+ * Class WowAppsPackagistExtension
  *
- * @link http://symfony.com/doc/current/cookbook/bundles/extension.html
+ * @author Alexey Samara <lion.samara@gmail.com>
+ * @package wow-apps/symfony-packagist
  */
 class WowAppsPackagistExtension extends Extension
 {

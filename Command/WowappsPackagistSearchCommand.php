@@ -1,4 +1,13 @@
 <?php
+/**
+ * This file is part of the wow-apps/symfony-packagist project
+ * https://github.com/wow-apps/symfony-packagist
+ *
+ * (c) 2017 WoW-Apps
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace WowApps\PackagistBundle\Command;
 
@@ -11,6 +20,12 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use WowApps\PackagistBundle\Exception\PackagistException;
 use WowApps\PackagistBundle\Service\Packagist;
 
+/**
+ * Class WowappsPackagistSearchCommand
+ *
+ * @author Alexey Samara <lion.samara@gmail.com>
+ * @package wow-apps/symfony-packagist
+ */
 class WowappsPackagistSearchCommand extends ContainerAwareCommand
 {
     protected function configure()
@@ -34,6 +49,10 @@ class WowappsPackagistSearchCommand extends ContainerAwareCommand
         ;
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         /** @var Packagist $packagist */
@@ -64,13 +83,26 @@ class WowappsPackagistSearchCommand extends ContainerAwareCommand
             $input->getOption('type')
         );
 
+        if (!$packagesList->count()) {
+            $symfonyStyle->warning(PackagistException::W_NO_SEARCH_RESULT);
+            return;
+        }
+
         $showList = $symfonyStyle->confirm(
             sprintf('Founded %d packages. Do you want to show them all?', $packagesList->count()),
             false
         );
 
         if ($showList) {
-            $symfonyStyle->listing($packagesList);
+            foreach ($packagesList as $package) {
+                $output->writeln(
+                    sprintf(
+                        '<options=bold;fg=yellow>%s</>%s',
+                        $package->getName(),
+                        PHP_EOL . $package->getDescription() . PHP_EOL
+                    )
+                );
+            }
         }
     }
 }
