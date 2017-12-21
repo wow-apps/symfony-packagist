@@ -265,60 +265,71 @@ class Packagist
                     continue;
                 }
 
-                $packageVersion = new PackageVersion();
-
-                $packageVersion
-                    ->setName($version['name'] ?? '')
-                    ->setDescription($version['description'] ?? '')
-                    ->setKeywords($version['keywords'] ?? [])
-                    ->setHomepage($version['homepage'] ?? '')
-                    ->setVersion($version['version'])
-                    ->setVersionNormalized($version['version_normalized'] ?? '')
-                    ->setLicense($version['license'][0] ?? '')
-                    ->setAuthors(new \ArrayObject())
-                    ->setSource(
-                        new PackageSource(
-                            $version['source']['type'] ?? '',
-                            $version['source']['url'] ?? '',
-                            $version['source']['reference'] ?? ''
-                        )
-                    )
-                    ->setDist(
-                        new PackageDist(
-                            $version['dist']['type'] ?? '',
-                            $version['dist']['url'] ?? '',
-                            $version['dist']['reference'] ?? '',
-                            $version['dist']['shasum'] ?? ''
-                        )
-                    )
-                    ->setType($version['type'] ?? '')
-                    ->setTime($version['time'] ?? '')
-                    ->setAutoload($version['autoload'] ?? [])
-                    ->setRequire(new \ArrayObject())
-                ;
-
-                if (!empty($version['authors'])) {
-                    foreach ($version['authors'] as $author) {
-                        $packageVersion->getAuthors()->append(
-                            new PackageAuthor(
-                                $author['name'] ?? '',
-                                $author['email'] ?? '',
-                                $author['homepage'] ?? '',
-                                $author['role'] ?? ''
-                            )
-                        );
-                    }
-                }
-
-                if (!empty($version['require'])) {
-                    foreach ($version['require'] as $name => $ver) {
-                        $packageVersion->getRequire()->append(new PackageDependency($name, $ver));
-                    }
-                }
+                $packageVersion = $this->createPackageVersion($version);
 
                 $package->getVersions()->offsetSet($packageVersion->getVersion(), $packageVersion);
             }
         }
+    }
+
+    /**
+     * @param array $version
+     * @return PackageVersion
+     */
+    private function createPackageVersion(array  $version): PackageVersion
+    {
+        $packageVersion = new PackageVersion();
+
+        $packageVersion
+            ->setName($version['name'] ?? '')
+            ->setDescription($version['description'] ?? '')
+            ->setKeywords($version['keywords'] ?? [])
+            ->setHomepage($version['homepage'] ?? '')
+            ->setVersion($version['version'])
+            ->setVersionNormalized($version['version_normalized'] ?? '')
+            ->setLicense($version['license'][0] ?? '')
+            ->setAuthors(new \ArrayObject())
+            ->setSource(
+                new PackageSource(
+                    $version['source']['type'] ?? '',
+                    $version['source']['url'] ?? '',
+                    $version['source']['reference'] ?? ''
+                )
+            )
+            ->setDist(
+                new PackageDist(
+                    $version['dist']['type'] ?? '',
+                    $version['dist']['url'] ?? '',
+                    $version['dist']['reference'] ?? '',
+                    $version['dist']['shasum'] ?? ''
+                )
+            )
+            ->setType($version['type'] ?? '')
+            ->setTime($version['time'] ?? '')
+            ->setAutoload($version['autoload'] ?? [])
+            ->setRequire(new \ArrayObject())
+        ;
+
+        if (!empty($version['authors'])) {
+            foreach ($version['authors'] as $author) {
+                $packageVersion->getAuthors()->append(
+                    new PackageAuthor(
+                        $author['name'] ?? '',
+                        $author['email'] ?? '',
+                        $author['homepage'] ?? '',
+                        $author['role'] ?? ''
+                    )
+                );
+            }
+        }
+
+        if (!empty($version['require'])) {
+            foreach ($version['require'] as $name => $ver) {
+                $packageVersion->getRequire()->append(new PackageDependency($name, $ver));
+            }
+        }
+
+        return $packageVersion;
     }
 
     /**
