@@ -72,7 +72,7 @@ class WowappsPackagistSearchCommand extends ContainerAwareCommand
                 PackagistException::E_EMPTY_SEARCH_QUERY_DESCRIPTION,
             ]);
 
-            die;
+            return;
         }
 
         $symfonyStyle->title('Search for packages');

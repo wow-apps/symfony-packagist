@@ -64,7 +64,7 @@ class WowappsPackagistPackageCommand extends ContainerAwareCommand
                 PackagistException::E_EMPTY_PACKAGE_NAME_DESCRIPTION,
             ]);
 
-            die;
+            return;
         }
 
         $symfonyStyle->title('Getting package ' . $argument);
