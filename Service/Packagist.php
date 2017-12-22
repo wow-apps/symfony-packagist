@@ -59,12 +59,12 @@ class Packagist
     }
 
     /**
-     * @param string|null $query
+     * @param string $query
      * @param string|null $tag
      * @param string|null $type
      * @return \ArrayObject|Package[]
      */
-    public function searchPackages($query = null, $tag = null, $type = null): \ArrayObject
+    public function searchPackages(string $query, $tag = null, $type = null): \ArrayObject
     {
         $result = new \ArrayObject();
         $currentPage = 1;
