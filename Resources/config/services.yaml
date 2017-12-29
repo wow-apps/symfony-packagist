@@ -6,4 +6,4 @@ services:
         class: WowApps\PackagistBundle\Service\Packagist
         arguments: ['@wowapps.api.provider']
         public: true
-        alias: 'wowapps.packagist.service'
+        alias: 'wowapps.packagist'
