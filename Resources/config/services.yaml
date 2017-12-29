@@ -1,9 +1,9 @@
 services:
-    wowapps.api.provider:
-        class: WowApps\PackagistBundle\Service\ApiProvider
+    WowApps\PackagistBundle\Service\ApiProvider:
         public: false
-    wowapps.packagist.service:
-        class: WowApps\PackagistBundle\Service\Packagist
-        arguments: ['@wowapps.api.provider']
+    WowApps\PackagistBundle\Service\Packagist:
+        arguments: ['@WowApps\PackagistBundle\Service\ApiProvider']
+        public: false
+    wowapps.packagist:
+        alias: WowApps\PackagistBundle\Service\Packagist
         public: true
-        alias: 'wowapps.packagist'
