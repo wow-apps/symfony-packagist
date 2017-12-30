@@ -16,19 +16,19 @@
 
 Packagist API Bundle for Symfony 3 and 4
 
-## Installation:
-
-### Requires:
+## Requires:
 
 * PHP 7.0+
 * Symfony 3.0+
 * Guzzle Client 6.0+
 
+## Installation
+
 ### Step 1: Download the Bundle
 
 ```json
 "require": {
-        "wow-apps/symfony-packagist": "^1"
+        "wow-apps/symfony-packagist": "^1.3"
 }
 ```
 
@@ -58,7 +58,7 @@ public function registerBundles()
 
 # Documentation
 
-* [Installation](https://github.com/wow-apps/symfony-packagist/wiki/1_Installation)
+* [Installation](https://github.com/wow-apps/symfony-packagist/wiki/1.-Installation)
 * [Commands](https://github.com/wow-apps/symfony-packagist/wiki/2.-Commands)
 * [Using Packagist API Bundle](https://github.com/wow-apps/symfony-packagist/wiki/3.-Using-Packagist-API-Bundle)
     
