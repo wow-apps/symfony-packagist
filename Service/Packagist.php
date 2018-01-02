@@ -44,6 +44,13 @@ class Packagist
         'metapackage',
         'composer-plugin'
     ];
+    const PACKAGE_TYPE_SYMFONY = 'symfony-bundle';
+    const PACKAGE_TYPE_WORDPRESS = 'wordpress-plugin';
+    const PACKAGE_TYPE_TYPO3 = 'typo3-cms-extension';
+    const PACKAGE_TYPE_LIBRARY = 'library';
+    const PACKAGE_TYPE_PROJECT = 'project';
+    const PACKAGE_TYPE_METAPACKAGE = 'metapackage';
+    const PACKAGE_TYPE_COMPOSER = 'composer-plugin';
 
     /** @var ApiProvider */
     private $apiProvider;
