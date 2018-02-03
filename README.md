@@ -61,9 +61,23 @@ public function registerBundles()
 * [Installation](https://github.com/wow-apps/symfony-packagist/wiki/1.-Installation)
 * [Commands](https://github.com/wow-apps/symfony-packagist/wiki/2.-Commands)
 * [Using Packagist API Bundle](https://github.com/wow-apps/symfony-packagist/wiki/3.-Using-Packagist-API-Bundle)
+
+
     
 # News and updates:
 
 Follow news and updates in my Telegram channel [@wow_apps_pro](https://t.me/wow_apps_pro) or Twitter [@alexey_samara_](https://twitter.com/alexey_samara_)
+
+# Say thanks:
+
+I don't ask for donates, I do what I do for free, for all development community. But I will be grateful if you inform me on the email in which project you are using this Bundle, as well as I will be glad to criticize and suggestions. 
+
+![e-mail](https://img.shields.io/badge/e--mail%3A-lion.samara%40gmail.com-lightgrey.svg?style=flat-square)
+
+# Changelog:
+
+* 1.4.0
+    * Added multiple requests concurrently for getting packages using promises and asynchronous requests
+    * Fixed service container name in commands
 
 ![Symfony Packagist Preview](http://cdn.wow-apps.pro/packagist/symfony-packagist-preview.jpg)

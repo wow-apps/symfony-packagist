@@ -182,8 +182,8 @@ class Packagist
      */
     public function getPackage(string $packageName): Package
     {
-        $request = sprintf(self::API_URL_PACKAGE, trim($packageName));
-        $response = $this->apiProvider->getAPIResponse($request);
+        $requestUrl = $this->createPackageUrl($packageName);
+        $response = $this->apiProvider->getAPIResponse($requestUrl);
         $this->validateResponse($response, 'package');
 
         return $this->createPackageObject($response);
@@ -191,18 +191,61 @@ class Packagist
 
     /**
      * @param array $packageNames
+     * @param bool $multiple
+     * @param int $concurrency
      * @return \ArrayObject|Package[]
      */
-    public function getPackages(array $packageNames): \ArrayObject
-    {
+    public function getPackages(
+        array $packageNames,
+        bool $multiple = true,
+        int $concurrency = ApiProvider::POOL_CONCURRENCY
+    ): \ArrayObject {
         $packages = new \ArrayObject();
 
-        foreach ($packageNames as $packageName) {
-            $package = $this->getPackage($packageName);
-            $packages->offsetSet($packageName, $package);
+        if (!$multiple) {
+            foreach ($packageNames as $packageName) {
+                $package = $this->getPackage($packageName);
+                $packages->offsetSet($packageName, $package);
+            }
+
+            return $packages;
+        }
+
+        $poolResult = $this->apiProvider->getBatchAPIResponse(
+            $this->createPackageUrls($packageNames),
+            $concurrency
+        );
+
+        foreach ($poolResult as $json) {
+            $this->validateResponse($json, 'package');
+            $package = $this->createPackageObject($json);
+            $packages->offsetSet($package->getName(), $package);
         }
 
         return $packages;
+    }
+
+    /**
+     * @param string $packageName
+     * @return string
+     */
+    private function createPackageUrl(string $packageName): string
+    {
+        return sprintf(self::API_URL_PACKAGE, trim($packageName));
+    }
+
+    /**
+     * @param array $packageNames
+     * @return array
+     */
+    private function createPackageUrls(array $packageNames): array
+    {
+        $urls = [];
+        foreach ($packageNames as $packageName) {
+            $urls[] = $this->createPackageUrl($packageName);
+        }
+
+        return $urls;
     }
 
     /**

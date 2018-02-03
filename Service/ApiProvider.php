@@ -13,6 +13,9 @@ namespace WowApps\PackagistBundle\Service;
 
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Pool;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
 
 /**
  * Class ApiProvider
@@ -22,6 +25,8 @@ use GuzzleHttp\Exception\ClientException;
  */
 class ApiProvider
 {
+    const POOL_CONCURRENCY = 25;
+
     /** @var GuzzleClient */
     private $guzzleClient;
 
@@ -53,5 +58,42 @@ class ApiProvider
         }
 
         return $json;
+    }
+
+    /**
+     * @param array $urls
+     * @param int $concurrency
+     * @return array
+     */
+    public function getBatchAPIResponse(array $urls, int $concurrency = self::POOL_CONCURRENCY): array
+    {
+        $requests = $this->createRequests($urls);
+        $responses = Pool::batch($this->guzzleClient, $requests, ['concurrency' => $concurrency]);
+
+        /** @var Response $response */
+        foreach ($responses as $key => $response) {
+            $json = json_decode($response->getBody(), true);
+            if (!$json) {
+                continue;
+            }
+
+            $responses[$key] = $json;
+        }
+
+        return $responses;
+    }
+
+    /**
+     * @param array $links
+     * @return array
+     */
+    private function createRequests(array $links): array
+    {
+        $requests = [];
+        foreach ($links as $link) {
+            $requests[] = new Request('GET', $link);
+        }
+
+        return $requests;
     }
 }

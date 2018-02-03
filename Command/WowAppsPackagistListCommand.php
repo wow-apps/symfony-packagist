@@ -57,7 +57,7 @@ class WowAppsPackagistListCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         /** @var Packagist $packagist */
-        $packagist = $this->getContainer()->get('wowapps.packagist.service');
+        $packagist = $this->getContainer()->get('wowapps.packagist');
         $symfonyStyle = new SymfonyStyle($input, $output);
 
         echo PHP_EOL;

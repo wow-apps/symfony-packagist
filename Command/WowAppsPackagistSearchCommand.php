@@ -59,7 +59,7 @@ class WowAppsPackagistSearchCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         /** @var Packagist $packagist */
-        $packagist = $this->getContainer()->get('wowapps.packagist.service');
+        $packagist = $this->getContainer()->get('wowapps.packagist');
         $searchQuery = strtolower($input->getArgument('search_query'));
         $symfonyStyle = new SymfonyStyle($input, $output);
 
